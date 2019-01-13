@@ -129,6 +129,7 @@ class LSClient(object):
         self._stream_connection = None
         self._stream_connection_thread = None
         self._bind_counter = 0
+        self._terminate = False
 
     def _encode_params(self, params):
         """Encode the parameter for HTTP POST submissions, but
@@ -257,6 +258,8 @@ class LSClient(object):
         else:
             log.warning("No connection to Lightstreamer")
 
+        self._terminate = True
+
     def destroy(self):
         """Destroy the session previously opened with
         the connect() invocation.
@@ -333,6 +336,9 @@ class LSClient(object):
                 print(traceback.format_exc())
                 message = None
 
+            if self._terminate:
+                break
+
             if notify:
                 notify('WATCHDOG=1')
 
@@ -372,7 +378,6 @@ class LSClient(object):
             else:
                 self._forward_update_message(message)
 
-        self._stream_connection = None
         if not rebind:
             log.debug("Closing connection")
             # Clear internal data structures for session
