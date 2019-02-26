@@ -342,7 +342,7 @@ class LSClient(object):
             if notify:
                 notify('WATCHDOG=1')
 
-            if message is None:
+            if not message:
                 receive = False
                 log.warning("No new message received")
             elif message == PROBE_CMD:
